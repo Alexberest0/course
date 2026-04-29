@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог курсов</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .course { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+        h2 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h1>Наши курсы</h1>
+    {% for course in courses %}
+        <div class="course">
+            <h2>{{ course.title }}</h2>
+            <p>{{ course.description }}</p>
+            <a href="#">Подробнее (скоро)</a>
+        </div>
+    {% endfor %}
+</body>
+</html>
