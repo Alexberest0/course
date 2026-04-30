@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ lesson.title }}</title>
+    <link rel="stylesheet" href="{% static 'courses/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <h1>{{ lesson.title }}</h1>
+    <div class="video-wrapper" id="videoWrapper">
+        <video 
+            controls 
+            controlsList="nodownload" 
+            oncontextmenu="return false;" 
+            disablePictureInPicture
+        >
+            <source src="{% url 'stream_lesson_video' lesson.id %}" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+        <div class="watermark" id="watermark">
+            ID: {{ request.user.public_id|slice:":8" }}
+        </div>
+    </div>
+
+
+
+    {% if lesson.description %}
+<div class="lesson-description">
+    <h3>Описание урока</h3>
+    <p>{{ lesson.description|linebreaks }}</p>
+</div>
+{% endif %}
+
+<!-- Вывод PDF (если файл загружен) -->
+{% if lesson.pdf_file %}
+<div class="lesson-pdf">
+    <h3>Материалы урока (PDF)</h3>
+    <a href="{{ lesson.pdf_file.url }}" target="_blank">Открыть PDF</a>
+    или
+    <a href="{{ lesson.pdf_file.url }}" download>Скачать PDF</a>
+    <!-- можно также встроить iframe: -->
+    <!-- <embed src="{{ lesson.pdf_file.url }}" width="100%" height="600px" type="application/pdf"> -->
+</div>
+{% endif %}
+    <a href="{% url 'catalog' %}" class="back-link">← Назад к каталогу</a>
+</div>
+
+<script src="{% static 'courses/watermark.js' %}"></script>
+</body>
+</html>

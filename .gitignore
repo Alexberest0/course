@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+db.sqlite3
+media/
+lesson_pdfs/
+lessons/
+venv/
+.vscode/
+.idea/
+*.log
