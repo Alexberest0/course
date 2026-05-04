@@ -107,3 +107,12 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f"{self.course.title} - {self.title}"
+    
+
+class AccessCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='purchased_courses')
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='purchased_by')
+    purchased_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'course')

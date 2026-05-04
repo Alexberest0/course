@@ -9,4 +9,7 @@ urlpatterns = [
     path('lesson/<int:lesson_id>/', views.lesson_detail, name='lesson_detail'),
     path('lesson/<int:lesson_id>/video/', views.stream_lesson_video, name='stream_lesson_video'),
     path('<slug:slug>/', views.course_detail, name='course_detail'),   # <-- должно быть здесь
+
+    path('buy/<slug:course_slug>/', views.initiate_payment, name='initiate_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
 ]

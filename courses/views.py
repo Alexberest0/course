@@ -126,22 +126,39 @@ def stream_lesson_video(request, lesson_id):
 def course_detail(request, slug):
     course = get_object_or_404(Course, slug=slug)
     user_has_access = False
-
-    # Проверяем, есть ли у пользователя уже доступ (для бесплатных курсов или админа)
     if request.user.is_authenticated:
-        if request.user.is_superuser or course.price == 0:
-            user_has_access = True
-
-    # Обработка промокода (временная логика)
-    promo_code = request.POST.get('promo_code') if request.method == 'POST' else None
-    if promo_code == 'TESTCODE':  # простой промокод для теста
-        user_has_access = True
-        # Здесь можно сохранить факт активации в сессию или базу, но для теста просто даём доступ на текущий запрос
-
+        user_has_access = AccessCode.objects.filter(user=request.user, course=course).exists()
     lessons = course.lessons.all() if user_has_access else None
-
     return render(request, 'courses/course_detail.html', {
         'course': course,
         'user_has_access': user_has_access,
         'lessons': lessons,
     })
+
+
+
+
+
+# courses/views.py
+from django.conf import settings
+from .models import AccessCode
+
+def initiate_payment(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if AccessCode.objects.filter(user=request.user, course=course).exists():
+        return redirect('course_detail', slug=course.slug)
+
+    if settings.TEST_MODE:
+        # Тестовая оплата: сразу даём доступ
+        AccessCode.objects.get_or_create(user=request.user, course=course)
+        return redirect('payment_success')
+    else:
+        # Здесь будет реальная интеграция с ЮKassa
+        return HttpResponse('Реальная оплата ещё не настроена.', status=501)
+    
+def payment_success(request):
+    return render(request, 'courses/payment_success.html')
